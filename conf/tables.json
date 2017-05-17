@@ -1,0 +1,17 @@
+{
+	
+	"stores" : {
+		"name" : "stores",
+		"columns" : "refstore varchar(255) primary key, picture varchar(255), name varchar(255), vat bigint, currency varchar(255), merchantkey varchar(255)"
+	},
+	
+	"products" : {
+		"name" : "products",
+		"columns" : "refproduct varchar(255) primary key, picture varchar(255), name varchar(255), creationdate varchar(255)"
+	},
+
+	"stock" : {
+		"name" : "stock",
+		"columns" : "refstore varchar(255) REFERENCES stores(refstore), refproduct varchar(255) REFERENCES products(refproduct), quantity integer, creationdate varchar(255), lastupdate varchar(255), status varchar(255), priceht integer, vat integer, constraint primaryKey PRIMARY KEY (refstore,refproduct)"
+	}
+}
