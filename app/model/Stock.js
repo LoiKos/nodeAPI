@@ -77,6 +77,31 @@ module.exports = class Stock {
 		})
 	}
 
+	update(storeId, productId, body){
+		if (Object.keys(body).length === 0){
+			return Promise.resolve()
+		}
+		let split_json = this.split(body)
+		if (split_json.error){
+			return Promise.reject(ApiError.parsingError("One key in the json body is not known or misspelled"))
+		}
+
+		let queries = []
+		if (Object.keys(split_json.stock).length != 0){
+			queries.push(pgp.helpers.update(split_json.stock,null,'stock') + ` WHERE refproduct = '${productId}' and refstore = '${storeId}' returning *`)
+		}
+		if (Object.keys(split_json.product).length != 0){
+			queries.push(pgp.helpers.update(split_json.product,null,'products') + ` WHERE refproduct = '${productId}' returning *`)
+		}
+
+
+		return db.tx( t => {
+			return t.any(
+				pgp.helpers.concat(queries)
+			)
+		})
+	}
+
 	split(json){	
 		let dict = {
 			stock : {},
