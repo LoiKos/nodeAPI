@@ -7,6 +7,8 @@
 */
 
 module.exports = {
+
+	parsingError: ((message) => { return new CustomError('parsingError', message)}),
 	
 	missingProperty: ((message) => { return new CustomError('missingProperty', message)}),
 	
