@@ -32,6 +32,9 @@ router.get('/', (req,res,next) => {
 
 router.get('/:id', (req,res,next) => {
 	product.find(req.params.id).then( data => {
+		if (data == undefined){
+			return next(ApiError.notFound())
+		}
 		return res.status(200).send(data).end()
 	}).catch( error => {
 		return next(error)
@@ -40,6 +43,9 @@ router.get('/:id', (req,res,next) => {
 
 router.delete('/:id', (req,res,next) => {
 	product.delete(req.params.id).then( data => {
+		if (data == undefined){
+			return next(ApiError.notFound())
+		}
 		return res.status(200).send(data).end()
 	}).catch( error => {
 		return next(error)

@@ -35,7 +35,7 @@ module.exports = class Store {
 	}
 
 	find(id) {
-		return db.one("select * from "+this.table()+" where refstore = $1", id)
+		return db.oneOrNone("select * from "+this.table()+" where refstore = $1", id)
 	}
 
 	all(limit = 0, offset = 0) {
@@ -55,7 +55,7 @@ module.exports = class Store {
 	}
 
 	delete(id) {
-		return db.one("delete from ${table~} where refstore = ${id} returning *",{
+		return db.oneOrNone("delete from ${table~} where refstore = ${id} returning *",{
 			table: this.table(),
 			id: id
 		})
@@ -64,6 +64,9 @@ module.exports = class Store {
 	update(id, json) {
 		return db.task(t => {
 			return this.find(id).then(store => {
+				if(!store){
+					return Promise.reject(ApiError.notFound())
+				}
 				for(key in json){
 					if (Object.keys(store).includes(key) && key != "refstore"){
 						store[key] = json[key]

@@ -35,7 +35,7 @@ module.exports = class Product {
 	}
 
 	find(id){
-		return db.one("select * from "+this.table()+" where refproduct = $1",[id])
+		return db.oneOrNone("select * from "+this.table()+" where refproduct = $1",[id])
 	}
 
 	all(limit = 0, offset = 0) {
@@ -54,12 +54,15 @@ module.exports = class Product {
 	}
 
 	delete(id){
-		return db.one("delete from "+this.table()+" where refproduct = $1 returning *",[id])
+		return db.oneOrNone("delete from "+this.table()+" where refproduct = $1 returning *",[id])
 	}
 
 	update(id, json) {
 		return db.task(t => {
 			return this.find(id).then(product => {
+				if(!product){
+					return Promise.reject(ApiError.notFound())
+				}
 				for(key in json){
 					if (Object.keys(product).includes(key) && ["refproduct","creationdate"].indexOf(key) == -1){
 						product[key] = json[key]
