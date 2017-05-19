@@ -3,9 +3,6 @@
 let helper = require('../helper')
 let db = require('../database')
 let ApiError = require('../helper-error')
-var pgp = require('pg-promise')({
-	
-});
 
 module.exports = class Store {
 
@@ -65,22 +62,17 @@ module.exports = class Store {
 	}
 
 	update(id, json) {
-		let obj = {}
-		for (key in json){
-			if( ["name","vat","picture","merchantkey"].includes(key) ){
-				obj[key] = json[key]
-			} else {
-				return Promise.reject(ApiError.notFound("One key in the json body is not known"))
-			}
-		}
-
-		return db.one("update "+this.table()+" set (${obj~}) = (${name},${vat},${picture},${merchantkey}) where refstore = ${id} returning *",{
-			obj:obj,
-			name: obj.name,
-			vat: obj.vat,
-			picture: obj.picture,
-			merchantkey: obj.merchantkey,
-			id:id
+		return db.task(t => {
+			return this.find(id).then(store => {
+				for(key in json){
+					if (Object.keys(store).includes(key) && key != "refstore"){
+						store[key] = json[key]
+					} else {
+						return Promise.reject(ApiError.notFound("One key in the json body is not known or can't be modified"))
+					}
+				}
+				return t.one('update '+this.table()+' set name = ${name}, vat = ${vat}, picture = ${picture}, merchantkey = ${merchantkey}  where refstore = ${refstore} returning *', store)
+			})
 		})
 	}
 };

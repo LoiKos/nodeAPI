@@ -5,23 +5,23 @@ const router = express.Router()
 
 let store = new Store()
 
-router.post('/', function(req,res,next){
+router.post('/', (req,res,next) => {
 	store.create(req.body).then(data => {
-   		res.status(201).json(data)
+   		return res.status(201).json(data).end()
    	}).catch( error => {
      	return next(error)
     });
 })
 
-router.get('/:id', function(req, res, next) {
+router.get('/:id', (req,res,next) => {
 	store.find(req.params.id).then(data => {
-   		res.status(200).json(data)
+   		res.status(200).json(data).end()
    	}).catch( error => {
      	return next(error)
     });
 })
 
-router.get('/', function(req, res, next) {
+router.get('/', (req,res,next) => {
 	store.all(req.query.limit,req.query.offset).then(data => {
 		let response = {}
 		response.total = data[0].count
@@ -32,23 +32,23 @@ router.get('/', function(req, res, next) {
 			response.offset = data[3]
 		}
 		response.data = data[1]
-   		res.status(200).json(response)
+   		return res.status(200).json(response).end()
    	}).catch( error => {
      	return next(error)
     });
 })
 
-router.delete('/:id', function(req, res, next) {
+router.delete('/:id', (req,res,next) => {
 	store.delete(req.params.id).then(data => {
-		res.status(200).json(data)
+		return res.status(200).json(data).end()
 	}).catch( error => {
 		return next(error)
 	})
 })
 
-router.patch('/:id', function(req, res, next) {
+router.patch('/:id', (req,res,next) => {
 	store.update(req.params.id,req.body).then(data => {
-		res.status(200).json(data)
+		return res.status(200).json(data).end()
 	}).catch( error => {
 		return next(error)
 	})	
