@@ -14,8 +14,8 @@ module.exports = class Store {
 		return 'stores'
 	}
 
-	create(json) {	
-		let obj = { 
+	create(json) {
+		let obj = {
 			refstore : helper.generateRef(),
 			name : null,
 			vat : null,
@@ -47,7 +47,7 @@ module.exports = class Store {
 		    // returning a promise that determines a successful transaction:
 		    return t.batch([q1, q2,limit, offset]); // all of the queries are to be resolved;
 		})
-		
+
 	}
 
 	count() {

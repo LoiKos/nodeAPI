@@ -1,13 +1,13 @@
 var pgp = require('pg-promise')({
-	
+
 });
 
 var database_info = {
-    host: 'localhost',
-    port: 32768,
-    database: 'MbaoDB',
-    user: 'Supervisor',
-    password: '1DFSQ894843NKF9F8SND9D'
+    host: process.env.DATABASE_HOST,
+    port: process.env.DATABASE_PORT,
+    database: process.env.DATABASE_DB,
+    user: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PASSWORD
 };
 
 

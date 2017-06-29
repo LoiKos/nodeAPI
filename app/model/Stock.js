@@ -15,7 +15,7 @@ module.exports = class Stock {
 
 	create(storeId, json){
 		let split_json = this.split(json)
-		
+
 		if (split_json.error){
 			return Promise.reject(ApiError.parsingError("One key in the json body is not known or misspelled"))
 		} else if ( this.unvalid(split_json) ){
@@ -26,7 +26,7 @@ module.exports = class Stock {
 		split_json.stock.refproduct = split_json.product.refproduct
 		split_json.stock.refstore = storeId
 		split_json.stock.creationdate = new Date()
-		
+
 		return db.tx(t=> {
 			return t.any(
 				pgp.helpers.concat([
@@ -43,7 +43,7 @@ module.exports = class Stock {
 					products.picture as product_picture,
 					products.creationdate as product_creationdate,
 					products.refproduct as product_refproduct
-					from stock inner join products on stock.refproduct = products.refproduct 
+					from stock inner join products on stock.refproduct = products.refproduct
 					where stock.refstore = $1 and stock.refproduct = $2`
 		return db.oneOrNone(query,[storeId, productId])
 	}
@@ -59,7 +59,7 @@ module.exports = class Stock {
 					from stock inner join products on stock.refproduct = products.refproduct
 					where stock.refstore = $1 limit $2^ offset $3`, [
 						storeId,
-						limit > 0 ? limit : `all`, 
+						limit > 0 ? limit : `all`,
 						offset
 						])
 			return t.batch([q1,q2,limit,offset])
@@ -88,6 +88,7 @@ module.exports = class Stock {
 
 		let queries = []
 		if (Object.keys(split_json.stock).length != 0){
+			split_json.stock.lastupdate = new Date()
 			queries.push(pgp.helpers.update(split_json.stock,null,'stock') + ` WHERE refproduct = '${productId}' and refstore = '${storeId}' returning *`)
 		}
 		if (Object.keys(split_json.product).length != 0){
@@ -102,7 +103,7 @@ module.exports = class Stock {
 		})
 	}
 
-	split(json){	
+	split(json){
 		let dict = {
 			stock : {},
 			product: {},
@@ -111,11 +112,11 @@ module.exports = class Stock {
 
 		for (key in json){
 			switch(key){
-				case "name":
+				case "product_name":
 					dict.product.name = json[key]
 					break;
-				case "picture":
-					dict.product[key] = json[key]
+				case "product_picture":
+					dict.product.picture = json[key]
 					break;
 				case "quantity":
 					dict.stock[key]   = json[key]
@@ -131,7 +132,7 @@ module.exports = class Stock {
 					break;
 				default:
 					dict.error = true
-					return dict 
+					return dict
 			}
 		}
 		return dict;
