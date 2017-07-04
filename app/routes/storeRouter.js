@@ -7,6 +7,9 @@ let store = new Store()
 
 router.post('/', (req,res,next) => {
 	store.create(req.body).then(data => {
+			if (data.vat != null) {
+				data.vat = data.vat / 100
+			}
    		return res.status(201).json(data).end()
    	}).catch( error => {
      	return next(error)
@@ -17,6 +20,9 @@ router.get('/:id', (req,res,next) => {
 	store.find(req.params.id).then(data => {
 		if (data == undefined){
 			return next(ApiError.notFound())
+		}
+		if (data.vat != null) {
+			data.vat = data.vat / 100
 		}
    		res.status(200).json(data).end()
    	}).catch( error => {
@@ -35,6 +41,11 @@ router.get('/', (req,res,next) => {
 			response.offset = data[3]
 		}
 		response.data = data[1]
+		for (item in response.data) {
+			if (response.data[item].vat != null) {
+				response.data[item].vat = response.data[item].vat / 100
+			}
+		}
    		return res.status(200).json(response).end()
    	}).catch( error => {
      	return next(error)
@@ -46,6 +57,9 @@ router.delete('/:id', (req,res,next) => {
 		if (data == undefined){
 			return next(ApiError.notFound())
 		}
+		if (data.vat != null) {
+			data.vat = data.vat / 100
+		}
 		return res.status(200).json(data).end()
 	}).catch( error => {
 		return next(error)
@@ -54,10 +68,13 @@ router.delete('/:id', (req,res,next) => {
 
 router.patch('/:id', (req,res,next) => {
 	store.update(req.params.id,req.body).then(data => {
+		if (data.vat != null) {
+			data.vat = data.vat / 100
+		}
 		return res.status(200).json(data).end()
 	}).catch( error => {
 		return next(error)
-	})	
+	})
 });
 
 module.exports = router

@@ -85,10 +85,9 @@ module.exports = class Stock {
 		if (split_json.error){
 			return Promise.reject(ApiError.parsingError("One key in the json body is not known or misspelled"))
 		}
-
+		split_json.stock.lastupdate = new Date()
 		let queries = []
 		if (Object.keys(split_json.stock).length != 0){
-			split_json.stock.lastupdate = new Date()
 			queries.push(pgp.helpers.update(split_json.stock,null,'stock') + ` WHERE refproduct = '${productId}' and refstore = '${storeId}' returning *`)
 		}
 		if (Object.keys(split_json.product).length != 0){
@@ -125,10 +124,10 @@ module.exports = class Stock {
 					dict.stock[key]   = json[key]
 					break;
 				case "priceht":
-					dict.stock[key]   = json[key]
+					dict.stock[key]   = json[key] * 100
 					break;
 				case "vat":
-					dict.stock[key]   = json[key]
+					dict.stock[key]   = json[key] * 100
 					break;
 				default:
 					dict.error = true

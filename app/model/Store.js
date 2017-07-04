@@ -26,7 +26,11 @@ module.exports = class Store {
 
 		for (key in json){
 			if (keys.indexOf(key)){
-				obj[key] = json[key]
+				if(key == "vat"){
+					obj[key] = json[key] * 100
+				} else {
+					obj[key] = json[key]
+					}
 			} else {
 				return Promise.reject(ApiError.notFound("One key in the json body is not known"))
 			}
@@ -69,12 +73,16 @@ module.exports = class Store {
 				}
 				for(key in json){
 					if (Object.keys(store).includes(key) && key != "refstore"){
-						store[key] = json[key]
+						if (key == "vat"){
+							store[key] = json[key] * 100
+						} else {
+							store[key] = json[key]
+						}
 					} else {
 						return Promise.reject(ApiError.notFound("One key in the json body is not known or can't be modified"))
 					}
 				}
-				return t.one('update '+this.table()+' set name = ${name}, vat = ${vat}, picture = ${picture}, merchantkey = ${merchantkey}  where refstore = ${refstore} returning *', store)
+				return t.one('update '+this.table()+' set name = ${name}, vat = ${vat}, picture = ${picture}, merchantkey = ${merchantkey}, currency = ${currency} where refstore = ${refstore} returning *', store)
 			})
 		})
 	}
