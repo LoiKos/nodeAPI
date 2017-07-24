@@ -13,6 +13,7 @@ module.exports = {
 
 		.then(data => {
 		    console.log("Tables created")
+				console.log(db.$pool)
 		})
 
 		.catch(error => {

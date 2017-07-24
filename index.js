@@ -7,8 +7,11 @@ const stock = require('./app/routes/stockRouter')
 const store = require('./app/routes/storeRouter')
 const product = require('./app/routes/productRouter')
 const ApiError = require('./app/helper-error')
+const morgan = require('morgan')
 
 dbCon.setup(db)
+
+app.use(morgan('combined'))
 
 app.use(bodyParser.json());
 
