@@ -1,8 +1,12 @@
-var pgp = require('pg-promise')({
+'use strict';
+const monitor = require('pg-monitor');
+const options = {
+	
+};
 
-});
+const pgp = require('pg-promise')(options);
 
-var database_info = {
+const databaseInfo = {
     host: process.env.DATABASE_HOST,
     port: process.env.DATABASE_PORT,
     database: process.env.DATABASE_DB,
@@ -10,7 +14,8 @@ var database_info = {
     password: process.env.DATABASE_PASSWORD
 };
 
+monitor.attach(options);
 
-var db = pgp(database_info);
+const db = pgp(databaseInfo);
 
 module.exports = db;

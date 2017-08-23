@@ -11,7 +11,7 @@
   "dependencies": {
     "body-parser": "^1.17.1",
     "express": "^4.15.2",
-    "morgan": "^1.8.2",
+    "pg-monitor": "^0.8.2",
     "pg-promise": "^6.3.5"
   }
 }
